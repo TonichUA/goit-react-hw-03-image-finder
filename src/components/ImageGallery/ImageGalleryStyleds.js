@@ -1,7 +1,5 @@
-import React from 'react';
 import styled from 'styled-components';
-
-const StyledImageGallery = styled.ul`
+export const StyledImageGallery = styled.ul`
   display: grid;
   max-width: calc(100vw - 48px);
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -13,9 +11,3 @@ const StyledImageGallery = styled.ul`
   margin-left: auto;
   margin-right: auto;
 `;
-
-export const ImageGallery = ({ children }) => {
-  return (
-    <StyledImageGallery className="gallery">{children}</StyledImageGallery>
-  );
-};

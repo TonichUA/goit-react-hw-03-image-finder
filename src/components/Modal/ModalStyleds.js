@@ -1,7 +1,4 @@
-import React from 'react';
 import styled from 'styled-components';
-import ModalComponent from 'react-modal';
-
 const customStyles = {
   content: {
     maxWidth: 'calc(100vw - 48px)',
@@ -26,8 +23,6 @@ const customStyles = {
   },
 };
 
-ModalComponent.setAppElement('#root');
-
 const ModalWrapper = styled.div`
   overflow: hidden;
   width: 100%;
@@ -42,16 +37,4 @@ const ModalWrapper = styled.div`
     object-fit: contain;
   }
 `;
-
-export const Modal = ({ onClose, image }) => {
-  return (
-    <ModalComponent
-      isOpen={image !== null && image !== undefined}
-      onRequestClose={onClose}
-      style={customStyles}
-      contentLabel="Image Modal"
-    >
-      <ModalWrapper>{image && <img src={image} alt="modal" />}</ModalWrapper>
-    </ModalComponent>
-  );
-};
+export { customStyles, ModalWrapper };

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { Button } from './Button';
-import { Modal } from './Modal';
+import { Modal } from './Modal/Modal';
 import { Searchbar } from './Searchbar';
-import { ImageGallery } from './ImageGallery';
-import { ImageGalleryItem } from './ImageGalleryItem';
+import { ImageGallery } from './ImageGallery/ImageGallery';
+import { queryImg } from './QueryImg';
+
 import { Bars } from 'react-loader-spinner';
 import styled from 'styled-components';
 
@@ -25,20 +25,6 @@ export class App extends Component {
     totalHits: null,
   };
 
-  async componentDidMount() {
-    this.setState({ isLoading: true });
-    try {
-      const initialImages = await this.fetchImages();
-      this.setState({
-        images: initialImages,
-      });
-    } catch (error) {
-      console.error('Error fetching initial images:', error);
-    } finally {
-      this.setState({ isLoading: false });
-    }
-  }
-
   componentDidUpdate(prevProps, prevState) {
     const { query, currentPage } = this.state;
 
@@ -49,24 +35,24 @@ export class App extends Component {
 
   fetchImages = async () => {
     const { query, currentPage } = this.state;
-    const apiKey = '39863085-06c0b9c863431b4674cecc2b0';
 
     try {
       this.setState({ isLoading: true });
 
-      const response = await axios.get(`https://pixabay.com/api/`, {
-        params: { key: apiKey, q: query, page: currentPage, per_page: 12 },
-      });
+      const response = await queryImg(query, currentPage);
 
-      const newImages = response.data.hits;
-      const totalMaxHits = response.data.totalHits;
-      this.setState(prevState => ({
-        images: [...prevState.images, ...newImages],
-        totalHits: totalMaxHits,
-      }));
-      return newImages;
+      const { hits, totalHits } = response;
+
+      if (hits && totalHits !== undefined) {
+        this.setState(prevState => ({
+          images: currentPage === 1 ? hits : [...prevState.images, ...hits],
+          totalHits: totalHits,
+        }));
+      } else {
+        console.error('Недійсні дані від Pixabay API:', response);
+      }
     } catch (error) {
-      console.error('Error fetching images:', error);
+      console.error('Помилка під час отримання зображень:', error);
     } finally {
       this.setState({ isLoading: false });
     }
@@ -80,43 +66,16 @@ export class App extends Component {
     this.setState(prevState => ({ currentPage: prevState.currentPage + 1 }));
   };
 
-  openModal = image => {
-    if (!this.state.isModalOpen) {
-      this.setState({ selectedImage: image, isModalOpen: true });
-      document.addEventListener('keydown', this.handleKeyDown);
-    }
-  };
-
-  closeModal = () => {
-    if (this.state.isModalOpen) {
-      this.setState({ selectedImage: null, isModalOpen: false });
-      document.removeEventListener('keydown', this.handleKeyDown);
-    }
-  };
-
-  handleKeyDown = e => {
-    if (e.key === 'Escape') {
-      this.closeModal();
-    }
-  };
-
   render() {
-    const { images, isLoading, selectedImage } = this.state;
+    const { images, isLoading, selectedImage, totalHits } = this.state;
 
     return (
       <StyledApp className="App">
         <Searchbar onSubmit={this.handleSearch} />
-        <ImageGallery images={images} onImageClick={this.openModal}>
-          {images.map(image => (
-            <ImageGalleryItem
-              key={image.id}
-              id={image.id}
-              src={image.webformatURL}
-              alt={image.tags}
-              onClick={() => this.openModal(image)}
-            />
-          ))}
-        </ImageGallery>
+        <ImageGallery
+          images={images}
+          openModal={image => this.setState({ selectedImage: image })}
+        />
         {isLoading && (
           <Bars
             type="Oval"
@@ -126,15 +85,13 @@ export class App extends Component {
             timeout={3000}
           />
         )}
-        {images.length > 0 &&
-          !isLoading &&
-          this.state.totalHits > images.length && (
-            <Button onLoadMore={this.loadMore} show={true} />
-          )}
+        {images.length > 0 && !isLoading && totalHits > images.length && (
+          <Button onLoadMore={this.loadMore} show={true} />
+        )}
         {selectedImage && (
           <Modal
             image={selectedImage.largeImageURL}
-            onClose={this.closeModal}
+            onClose={() => this.setState({ selectedImage: null })}
           />
         )}
       </StyledApp>
