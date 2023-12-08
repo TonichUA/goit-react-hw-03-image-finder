@@ -2,9 +2,7 @@ import React from 'react';
 import { StyledImageGallery } from './ImageGalleryStyleds';
 import { ImageGalleryItem } from './ImageGalleryItem';
 
-export class ImageGallery extends React.Component {
-  state = {};
-
+class ImageGallery extends React.Component {
   openModal = image => {
     this.props.openModal(image);
   };
@@ -27,3 +25,5 @@ export class ImageGallery extends React.Component {
     );
   }
 }
+
+export { ImageGallery };

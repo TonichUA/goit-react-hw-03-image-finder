@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Button } from './Button';
-import { Modal } from './Modal/Modal';
-import { Searchbar } from './Searchbar';
-import { ImageGallery } from './ImageGallery/ImageGallery';
-import { queryImg } from './QueryImg';
-
 import { Bars } from 'react-loader-spinner';
 import styled from 'styled-components';
+import Modal from 'react-modal';
+
+import { Searchbar } from './Searchbar';
+import { ImageGallery } from './ImageGallery/ImageGallery';
+import { Button } from './Button';
+import { queryImg } from './QueryImg';
 
 const StyledApp = styled.div`
   display: grid;
@@ -15,7 +15,9 @@ const StyledApp = styled.div`
   padding-bottom: 24px;
 `;
 
-export class App extends Component {
+Modal.setAppElement('#root');
+
+class App extends Component {
   state = {
     query: '',
     images: [],
@@ -23,6 +25,7 @@ export class App extends Component {
     isLoading: false,
     selectedImage: null,
     totalHits: null,
+    isModalOpen: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -66,16 +69,23 @@ export class App extends Component {
     this.setState(prevState => ({ currentPage: prevState.currentPage + 1 }));
   };
 
+  openModal = image => {
+    this.setState({ selectedImage: image, isModalOpen: true });
+  };
+
+  closeModal = () => {
+    this.setState({ selectedImage: null, isModalOpen: false });
+  };
+
   render() {
-    const { images, isLoading, selectedImage, totalHits } = this.state;
+    const { images, isLoading, selectedImage, totalHits, isModalOpen } =
+      this.state;
 
     return (
       <StyledApp className="App">
         <Searchbar onSubmit={this.handleSearch} />
-        <ImageGallery
-          images={images}
-          openModal={image => this.setState({ selectedImage: image })}
-        />
+        <ImageGallery images={images} openModal={this.openModal} />
+
         {isLoading && (
           <Bars
             type="Oval"
@@ -88,13 +98,20 @@ export class App extends Component {
         {images.length > 0 && !isLoading && totalHits > images.length && (
           <Button onLoadMore={this.loadMore} show={true} />
         )}
-        {selectedImage && (
-          <Modal
-            image={selectedImage.largeImageURL}
-            onClose={() => this.setState({ selectedImage: null })}
-          />
-        )}
+        <Modal
+          isOpen={isModalOpen}
+          onRequestClose={this.closeModal}
+          contentLabel="Image Modal"
+        >
+          <div>
+            {selectedImage && (
+              <img src={selectedImage.largeImageURL} alt="modal" />
+            )}
+          </div>
+        </Modal>
       </StyledApp>
     );
   }
 }
+
+export default App;

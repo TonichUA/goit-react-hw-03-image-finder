@@ -1,8 +1,9 @@
 import styled from 'styled-components';
-const customStyles = {
+
+export const customStyles = {
   content: {
-    maxWidth: 'calc(100vw - 48px)',
-    maxHeight: 'calc(100vh - 24px)',
+    maxWidth: '80vw',
+    maxHeight: '80vh',
     margin: 'auto',
     background: '#fff',
     boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
@@ -23,7 +24,7 @@ const customStyles = {
   },
 };
 
-const ModalWrapper = styled.div`
+export const ModalWrapper = styled.div`
   overflow: hidden;
   width: 100%;
   height: 100%;
@@ -37,4 +38,3 @@ const ModalWrapper = styled.div`
     object-fit: contain;
   }
 `;
-export { customStyles, ModalWrapper };

@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import { customStyles, ModalWrapper } from './ModalStyleds';
-import ModalComponent from 'react-modal';
 
-ModalComponent.setAppElement('#root');
-
-export class Modal extends Component {
+class Modal extends Component {
   state = {
     selectedImage: null,
     isModalOpen: false,
@@ -34,16 +31,30 @@ export class Modal extends Component {
     const { selectedImage, isModalOpen } = this.state;
 
     return (
-      <ModalComponent
-        isOpen={isModalOpen}
-        onRequestClose={this.closeModal}
-        style={customStyles}
-        contentLabel="Image Modal"
-      >
-        <ModalWrapper>
-          {selectedImage && <img src={selectedImage} alt="modal" />}
-        </ModalWrapper>
-      </ModalComponent>
+      <div>
+        {isModalOpen && (
+          <div>
+            <div
+              onClick={this.closeModal}
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: 'rgba(0,0,0,0.5)',
+              }}
+            ></div>
+            <ModalWrapper>
+              {selectedImage && (
+                <img src={selectedImage.src} alt={selectedImage.alt} />
+              )}
+            </ModalWrapper>
+          </div>
+        )}
+      </div>
     );
   }
 }
+
+export default Modal;
