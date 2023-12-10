@@ -1,21 +1,13 @@
 import React, { Component } from 'react';
 import { Bars } from 'react-loader-spinner';
-import styled from 'styled-components';
-import Modal from 'react-modal';
+
+import { StyledApp } from './AppStyleds';
 
 import { Searchbar } from './Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button';
 import { queryImg } from './QueryImg';
-
-const StyledApp = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: 16px;
-  padding-bottom: 24px;
-`;
-
-Modal.setAppElement('#root');
+import Modal from '../components/Modal/Modal';
 
 class App extends Component {
   state = {
@@ -48,8 +40,8 @@ class App extends Component {
 
       if (hits && totalHits !== undefined) {
         this.setState(prevState => ({
-          images: currentPage === 1 ? hits : [...prevState.images, ...hits],
-          totalHits: totalHits,
+          images: [...prevState.images, ...hits],
+          totalHits,
         }));
       } else {
         console.error('Недійсні дані від Pixabay API:', response);
@@ -101,14 +93,8 @@ class App extends Component {
         <Modal
           isOpen={isModalOpen}
           onRequestClose={this.closeModal}
-          contentLabel="Image Modal"
-        >
-          <div>
-            {selectedImage && (
-              <img src={selectedImage.largeImageURL} alt="modal" />
-            )}
-          </div>
-        </Modal>
+          selectedImage={selectedImage}
+        />
       </StyledApp>
     );
   }

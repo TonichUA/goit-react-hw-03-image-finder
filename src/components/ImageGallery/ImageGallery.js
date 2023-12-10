@@ -2,28 +2,18 @@ import React from 'react';
 import { StyledImageGallery } from './ImageGalleryStyleds';
 import { ImageGalleryItem } from './ImageGalleryItem';
 
-class ImageGallery extends React.Component {
-  openModal = image => {
-    this.props.openModal(image);
-  };
-
-  render() {
-    const { images } = this.props;
-
-    return (
-      <StyledImageGallery className="gallery">
-        {images.map(image => (
-          <ImageGalleryItem
-            key={image.id}
-            id={image.id}
-            src={image.webformatURL}
-            alt={image.tags}
-            onClick={() => this.openModal(image)}
-          />
-        ))}
-      </StyledImageGallery>
-    );
-  }
-}
+const ImageGallery = ({ images, openModal }) => (
+  <StyledImageGallery className="gallery">
+    {images.map(image => (
+      <ImageGalleryItem
+        key={image.id}
+        id={image.id}
+        src={image.webformatURL}
+        alt={image.tags}
+        openModal={openModal}
+      />
+    ))}
+  </StyledImageGallery>
+);
 
 export { ImageGallery };
